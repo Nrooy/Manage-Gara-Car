@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thêm mới xe</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+</head>
+<body>
+<div th:replace="headerAdminHome"></div>
+<div style="margin-top: 40px">
+    <div class="formbold-form-title">
+        <h2 style="text-align: center" class="font-weight-bold">Thêm mới xe</h2>
+    </div>
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-4 border border-primary p-3">
+
+        </div>
+
+
+
+        <div class="col-8 border border-primary p-3">
+            <form action="#" method="POST" th:action="@{/tblxe/save}" th:object="${tblxe}">
+                <div class="formbold-form-title">
+                    <h2 style="text-align: center" class="font-weight-bold">Sửa thông tin xe</h2>
+                </div>
+                <div class="row">
+                    <div class="col-3"></div>
+                    <div class="col-3 border border-primary p-3">
+                        <label class="font-weight-bold">Tên người dùng</label>
+                        <input type="text" th:readonly="true" th:field="*{tblnguoidung.ten}" class="form-control mb-4 col-4">
+                        <label class="font-weight-bold">Số điện thoại</label>
+                        <input type="text" th:readonly="true" th:field="*{tblnguoidung.sdt}" class="form-control mb-4 col-4">
+                        <label class="font-weight-bold">Địa chỉ</label>
+                        <input type="text" th:readonly="true" th:field="*{tblnguoidung.diachi}" class="form-control mb-4 col-4">
+                    </div>
+                    <div class="col-3 border border-primary p-3" >
+                        <label class="font-weight-bold">Tên xe</label>
+                        <input type="text" th:field="*{ten}" class="form-control mb-4 col-4">
+                        <label class="font-weight-bold">Màu xe</label>
+                        <input type="text" th:field="*{mauxe}" class="form-control mb-4 col-4">
+                        <label class="font-weight-bold">Biển số xe </label>
+                        <input type="text"  th:field="*{bienso}" class="form-control mb-4 col-4">
+                        <label class="font-weight-bold">Mô tả</label>
+                        <input type="text" th:field="*{mota}" class="form-control mb-4 col-4">
+                        <input type="hidden" th:field="*{id}">
+                        <input type="hidden" th:field="*{tblnguoidung.id}">
+                        <button class="btn btn-primary btn-sm formbold-btn">Cập nhật</button>
+                    </div>
+                </div>
+                <script th:if="${errorMessage}">
+                    alert("Trùng biển số xe rồi !!!");
+                </script>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

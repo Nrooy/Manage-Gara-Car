@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thêm mới xe</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+
+</head>
+<body>
+<div th:replace="headerAdminHome"></div>
+<div style="margin-top: 40px">
+    <div class="formbold-form-title">
+        <h2 style="text-align: center" class="font-weight-bold">Thêm mới xe/ Chọn người dùng</h2>
+    </div>
+    <div class="row">
+        <div class="col-4"></div>
+        <div class="col-4 border border-primary p-3">
+            <form method="get" th:action="@{/tblxe/add/search}" class="search-container">
+                <input type="text" id="searchInput" placeholder="Tìm..." name = "keywords">
+                <button type="submit" class="btn-search">Tìm kiếm</button>
+            </form>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tên</th>
+                    <th>Số điện thoại</th>
+                    <th>Địa chỉ</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Sử dụng Thymeleaf để lặp qua danh sách xe và hiển thị thông tin -->
+                <tr th:each="nguoidung : ${users}">
+                    <td th:text="${nguoidung.getId()}"></td>
+                    <td th:text="${nguoidung.getTen()}"></td>
+                    <td th:text="${nguoidung.getSdt()}"></td>
+                    <td th:text="${nguoidung.getDiachi()}"></td>
+                    <td><a th:href="${'/tblxe/add/'+nguoidung.getId()}" class="btn btn-primary btn-sm" >Chọn</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

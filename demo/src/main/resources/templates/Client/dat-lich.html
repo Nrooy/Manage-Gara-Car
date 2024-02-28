@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Đặt lịch sửa xe</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+
+</head>
+<body>
+<div th:replace="headerClientHome"></div>
+<div class="row">
+    <div class="col-md-4"></div>
+    <div class="col-md-4 border border-secondary p-3 rounded" style="margin-top: 40px;text-align: center" >
+        <form action="/saveHoaDon" method="POST">
+            <p class="font-weight-bold">Tên Khách Hàng</p>
+            <input th:field="${tblnguoidung.ten}" th:readonly="true">
+            <p class="font-weight-bold">Số điện thoại</p>
+            <input th:field="${tblnguoidung.sdt}" th:readonly="true">
+            <p class="font-weight-bold">Địa chỉ</p>
+            <input th:field="${tblnguoidung.diachi}" th:readonly="true">
+
+            <!-- Use <select> for the dropdown -->
+
+            <div id="thongTinXeContainer" style="margin-top: 20px">
+
+              <div class="border border-secondary p-3 rounded">
+                  <label class="font-weight-bold">Xe </label>
+                  <br>
+                  <p style="margin-top: 10px">
+                      <select name="selectSlot">
+                          <option th:each="slot :${tblslot}" th:value="${slot.id}" th:text="${slot.so}">Slot</option>
+                      </select>
+                  </p>
+                  <a>
+                      <select name="selectCar">
+                          <option th:each="xe:${tblXe}" th:value="${xe.id}" th:text="${xe.ten + ' : ' +xe.bienso}">Chọn xe</option>
+                      </select>
+                  </a>
+                  <br>
+
+
+                  <label class="font-weight-bold" style="margin-top: 20px">Danh sách dịch vụ</label>
+                  <button type="button" class="btn btn-primary" style="margin-top: 10px" onclick="addDichVuForm()">Thêm dịch vụ</button>
+                  <!-- Container để chứa các form chọn dịch vụ -->
+                  <table id="dichVuTable" class="table">
+                      <thead>
+                      <tr>
+                          <th>Dịch vụ</th>
+                          <th>Giá tiền</th>
+                          <th>Xóa</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr class="dichvu-form" th:each="index : ${#numbers.sequence(0, 2)}">
+                          <td>
+                              <!-- Use <select> for the dropdown -->
+                              <select name="selectDichVus" onchange="displayDichVuDetails(this)">
+                                  <option value="" disabled selected>Hãy chọn dịch vụ</option>
+                                  <option th:each="dichvu :${tbldichvu}" th:value="${dichvu.id}" th:text="${dichvu.ten}" th:data-gia="${dichvu.gia}">Chọn Dịch vụ</option>
+                              </select>
+                          </td>
+                          <td class="giaTien"></td>
+                          <td>
+                              <button type="button" onclick="removeDichVuForm(this)">Xóa dịch vụ</button>
+                          </td>
+                      </tr>
+                      </tbody>
+                      <tfoot>
+                      <tr>
+                          <td colspan="2">Tổng tiền:</td>
+                          <td class="tongTien"></td>
+                      </tr>
+                      </tfoot>
+                  </table>
+
+              </div>
+
+
+            </div>
+<!--            <button type="button" class="btn btn-primary" style="margin-top: 10px" >Thêm xe</button>-->
+            <br>
+            <button type="submit" class="btn btn-primary" style="margin-top: 12px ; margin-left: 400px">Đặt lịch</button>
+            <script th:if="${ERROR}">
+                alert("Bạn chưa chọn dịch vụ");
+            </script>
+        </form>
+    </div>
+    <div class="col-md-4"></div>
+</div>
+<!-- Thymeleaf expression to check if message exists -->
+
+
+<script >
+
+    function addDichVuForm() {
+        var tableBody = document.querySelector("#dichVuTable tbody");
+        var templateRow = tableBody.querySelector(".dichvu-form");
+        var clonedRow = templateRow.cloneNode(true);
+        tableBody.appendChild(clonedRow);
+        updateTotalPrice();
+    }
+
+    function displayDichVuDetails(selectElement) {
+        var selectedOption = selectElement.options[selectElement.selectedIndex];
+        var gia = selectedOption.getAttribute("data-gia");
+        var row = selectElement.closest("tr");
+        var giaTienCell = row.querySelector(".giaTien");
+        giaTienCell.innerHTML = gia;
+
+        // Nếu giá không tồn tại, đặt giá trị thành 0 hoặc giá trị mặc định khác
+        gia = gia ? parseFloat(gia) : 0;
+
+        // Lưu giá trị vào data-gia để sử dụng khi tính tổng
+        selectElement.setAttribute("data-gia", gia);
+
+        // Cập nhật tổng tiền sau khi hiển thị chi tiết dịch vụ
+        updateTotalPrice();
+    }
+    function removeDichVuForm(buttonElement) {
+        var rowToRemove = buttonElement.closest("tr");
+        rowToRemove.remove();
+        updateTotalPrice();
+    }
+    function updateTotalPrice() {
+        var totalPriceCell = document.querySelector(".tongTien");
+        var selectElements = document.getElementsByName("selectDichVus");
+
+        var totalPrice = 0;
+        for (var i = 0; i < selectElements.length; i++) {
+            var selectedOption = selectElements[i].options[selectElements[i].selectedIndex];
+            var gia = selectedOption.getAttribute("data-gia");
+            totalPrice += gia ? parseFloat(gia) : 0;
+        }
+
+        // Hiển thị tổng tiền trong ô "tongTien"
+        totalPriceCell.innerHTML = totalPrice.toFixed(2);  // Hiển thị dưới dạng số có hai chữ số thập phân
+    }
+</script>
+
+</body>
+</html>
